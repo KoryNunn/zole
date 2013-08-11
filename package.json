@@ -1,0 +1,26 @@
+{
+    "name": "zole",
+    "description": "solves all problems probably",
+    "author": "Kory Nunn <knunn187@gmail.com>",
+    "tags": [
+        "things"
+    ],
+    "version": "0.0.1",
+    "main": "zole.js",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/KoryNunn/zole.git"
+    },
+    "bugs": {
+        "url": "http://github.com/KoryNunn/zole/issues"
+    },
+    "contributors": [],
+    "devDependencies": {
+        "crel":"x.x.x"
+    },
+    "dependencies": {
+        "spec-js":"x.x.x"
+    },
+    "scripts":{
+    }
+}
