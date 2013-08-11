@@ -158,8 +158,8 @@ function copyPhysics(entity1, entity2){
 
 
 function Particle(game){
-    this.width = 5;
-    this.height = 5;
+    this.width = 2;
+    this.height = 2;
     this.mass = 50;
     this.angle = 0; // visual angle
     this.life = 20;
@@ -174,7 +174,7 @@ Particle.prototype.step = function(){
 
     this.angle += Math.random() * 180 - 90;
 
-    applyForce(this, this.mass / 5, this.angle);
+    applyForce(this, this.mass / 10, this.angle);
     
     if(this.x < 0 || this.x > this.game.viewPort._canvas.width){
         this.x = this.game.viewPort._canvas.width - this.x;
@@ -219,6 +219,13 @@ Bullet.prototype.step = function(){
                 this.y - this.height/2 > entity.y - entity.height / 2 && 
                 this.y + this.height/2 < entity.y + entity.height / 2
             ){
+                for (var i = 0; i < 10; i++) {
+                    var particle = new Particle(this.game);
+
+                    copyPhysics(this, particle);
+
+                    this.game.addEntity(particle);
+                };
                 entity.destroy();
                 this.destroy();
             }
@@ -267,7 +274,7 @@ Ship.prototype.step = function(){
 
     //             entity.velocity.y = this.velocity.y;
     //             entity.velocity.y = this.velocity.y;
-                
+
     //             this.velocity.x = thisVelocityX;
     //             this.velocity.y = thisVelocityY;
     //         }
@@ -294,16 +301,8 @@ Ship.prototype.render = function(){
     context.lineTo(this.x-this.width/2, this.y + this.height / 2);
     context.lineTo(this.x+this.width/2, this.y + this.height / 2);
     context.lineTo(this.x, this.y - this.height / 2);
-    context.closePath();
 };
 Ship.prototype.destroy = function(){
-    for (var i = 0; i < 10; i++) {
-        var particle = new Particle(this.game);
-
-        copyPhysics(this, particle);
-
-        this.game.addEntity(particle);
-    };
     this.__super__.destroy.apply(this, arguments);
 };
 
@@ -346,6 +345,7 @@ function Player(game, description){
 function ViewPort(description){
     this._canvas = crel('canvas');
     this._context = this._canvas.getContext('2d');
+    this._context.fillStyle = 'white';
 
     for(var key in description){
         this[key] = description[key];
@@ -355,8 +355,6 @@ function ViewPort(description){
     this._canvas.height = this.height;
 }
 ViewPort.prototype.render = function(){
-    this._context.fill();
-    this._context.stroke();
 };
 
 function spawnEnemy(game){
@@ -459,10 +457,12 @@ Game.prototype.addPlayer = function(player){
 };
 Game.prototype.beginRender = function(){
     this.viewPort._context.clearRect(0,0,this.viewPort._canvas.width, this.viewPort._canvas.height);
-    this.viewPort._context.beginPath();    
-    this.viewPort._context.fillStyle = 'white';
+    this.viewPort._context.beginPath();
 };
 Game.prototype.endRender = function(){
+    this.viewPort._context.closePath();
+    this.viewPort._context.fillStyle = 'white';
+    this.viewPort._context.fill();
     this.viewPort.render();
 };
 
