@@ -226,8 +226,43 @@ function spawnEnemy(game){
     game.addEntity(enemy);
 }
 
-window.addEventListener('load', function(){
-    var game = new Game();
+var game = new zole.Game();
 
+
+    var ship = this.ship = new Ship(game);
+
+    game.processLoop.on('step', function(){
+        if(ship.destroyed){
+            return;
+        }
+        if(keys.left in game.io.keysDown){
+            ship.angle -= 3;
+        }
+        if(keys.right in game.io.keysDown){
+            ship.angle += 3;
+        }
+        if(keys.up in game.io.keysDown){
+            applyForce(ship, ship.mass/10, ship.angle);
+        }
+        if(keys.space in game.io.keysDown){
+            if(!ship.gunCooldown){
+                ship.gunCooldown = 5;
+                var bullet = new Bullet(game);
+                game.addEntity(bullet);
+
+                bullet.owner = ship;
+
+                copyPhysics(ship, bullet);
+
+                applyForce(bullet, bullet.mass * 5, bullet.angle);
+            }
+        }
+    });
+
+    this.ship.x = 10;
+
+    game.addEntity(this.ship);
+
+window.addEventListener('load', function(){
     document.body.appendChild(game.viewPort._canvas);
 });
