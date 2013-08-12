@@ -1,5 +1,5 @@
 var createSpec = require('spec-js'),
-    EventEmitter = require('events'),
+    EventEmitter = require('events').EventEmitter,
     crel = require('crel'),
     ProcessLoop = require('./src/ProcessLoop'),
     RenderLoop = require('./src/RenderLoop');
@@ -30,13 +30,12 @@ function Game(state){
     }
 
     this._processLoop.on('step', function(loop, timestamp){
-        for(var key in game.entities){
-            game.entities[key].step();
-        }
+        game.emit('step', timestamp);
     });
 
     this._renderLoop.on('frame', function(loop, timestamp){
         game.render();
+        game.emit('render', timestamp);
     });
 
     this._processLoop.start();
@@ -52,8 +51,15 @@ Game.prototype.addEntity = function(entity){
         this.entities[entity.type] = {};
     }
     this.entities[entity.type][entity._id] = entity;
+    entity.game = this;
 
-    entity._cleanups.push(this.on('frame', entity.render));
+    this.on('step', function(){
+        entity.step();
+    });
+
+    this.on('frame', function(){
+        entity.render();
+    });
 
     entity.x = entity.x || this.viewPort._canvas.width / 2;
     entity.y = entity.y || this.viewPort._canvas.height / 2;

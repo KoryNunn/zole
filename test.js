@@ -30,7 +30,7 @@ Particle.prototype.step = function(){
 
     this.angle += Math.random() * 180 - 90;
 
-    applyForce(this, this.mass / 10, this.angle);
+    this.applyForce(this.mass / 10, this.angle);
     
     if(this.x < 0 || this.x > this.game.viewPort._canvas.width){
         this.x = this.game.viewPort._canvas.width - this.x;
@@ -108,7 +108,7 @@ function Ship(game){
     this.gunCooldown = 0;
 }
 Ship = createSpec(Ship, Entity);
-Ship.prototype.type = 'ship'
+Ship.prototype.type = 'ship';
 Ship.prototype.step = function(){
     if(this.x < 0 || this.x > this.game.viewPort._canvas.width){
         this.x = this.game.viewPort._canvas.width - this.x;
@@ -144,8 +144,6 @@ Ship.prototype.step = function(){
     // friction
     this.velocity.x*=0.99;
     this.velocity.y*=0.99;
-
-    this.__super__.step.apply(this, arguments);
 };
 Ship.prototype.render = function(){
     var context = this.game.viewPort._context;
@@ -171,13 +169,13 @@ function spawnEnemy(game){
     enemy.angle = Math.random() * 360;
 
 
-    game.processLoop.on('step', function(){
+    game.on('step', function(){
         if(enemy.destroyed){
             return;
         }
         enemy.angle += Math.random() * 5 - 2.5;
 
-        applyForce(enemy, enemy.mass/10, enemy.angle);
+        enemy.applyForce(enemy.mass/10, enemy.angle);
 
         if(Math.random() * 1000 < 3){
             var bullet = new Bullet(game);
@@ -192,7 +190,7 @@ function spawnEnemy(game){
                 x: enemy.velocity.x,
                 y: enemy.velocity.y
             };
-            applyForce(bullet, bullet.mass * 3, bullet.angle);
+            bullet.applyForce(bullet.mass * 3, bullet.angle);
         }
         enemy.velocity.x*=0.8;
         enemy.velocity.y*=0.8;
@@ -206,14 +204,14 @@ var game = new zole.Game();
 var ship = new Ship();
 
 
-    game.currentPlayer = new Player(this);
-    game.addPlayer(this.currentPlayer);
+    // game.currentPlayer = new Player();
+    // game.addPlayer(this.currentPlayer);
 
     for(var i = 0; i < 20; i++){
         spawnEnemy(game);
     }
 
-    game.processLoop.on('step', function(){
+    game.on('step', function(){
         if(ship.destroyed){
             return;
         }
@@ -224,7 +222,7 @@ var ship = new Ship();
             ship.angle += 3;
         }
         if(keys.up in game.io.keysDown){
-            applyForce(ship, ship.mass/10, ship.angle);
+            ship.applyForce(ship.mass/10, ship.angle);
         }
         if(keys.space in game.io.keysDown){
             if(!ship.gunCooldown){
@@ -236,14 +234,14 @@ var ship = new Ship();
 
                 copyPhysics(ship, bullet);
 
-                applyForce(bullet, bullet.mass * 5, bullet.angle);
+                bullet.applyForce(bullet.mass * 5, bullet.angle);
             }
         }
     });
 
-    this.ship.x = 10;
+    ship.x = 10;
 
-    game.addEntity(this.ship);
+    game.addEntity(ship);
 
 window.addEventListener('load', function(){
     document.body.appendChild(game.viewPort._canvas);
