@@ -1,33 +1,8 @@
 var zole = require('./'),
     createSpec = require('spec-js'),
     crel = require('crel');
+    Entity = require('./src/Entity');
 
-var keys = {
-    left: 37,
-    right: 39,
-    up: 38,
-    down: 40,
-    w: 87,
-    a:65,
-    s: 83,
-    d: 68,
-    space: 32
-};
-
-function initEventListeners(game){
-    game.io = {};
-    game.io.keysDown = {};
-    game.io.mouse = {};
-    window.addEventListener('keydown', function(event){
-        game.io.keysDown[event.which] = true;
-    });
-    window.addEventListener('keyup', function(event){
-        delete game.io.keysDown[event.which];
-    });
-    window.addEventListener('mousemove', function(event){
-        game.io.mouse = event;
-    });
-}
 
 function copyPhysics(entity1, entity2){
     entity2.x = entity1.x;
@@ -228,8 +203,15 @@ function spawnEnemy(game){
 
 var game = new zole.Game();
 
+var ship = new Ship();
 
-    var ship = this.ship = new Ship(game);
+
+    game.currentPlayer = new Player(this);
+    game.addPlayer(this.currentPlayer);
+
+    for(var i = 0; i < 20; i++){
+        spawnEnemy(game);
+    }
 
     game.processLoop.on('step', function(){
         if(ship.destroyed){

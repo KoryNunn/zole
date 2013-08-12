@@ -1,14 +1,6 @@
 var createSpec = require('spec-js'),
-    EventEmitter = require('events');
+    EventEmitter = require('events').EventEmitter;
 
-function gameLoop(zole){
-    if(zole._run){
-        zole.emit('step', zole);
-        setTimeout(function(){
-            gameLoop(zole, new Date())
-        }, 10);
-    }
-}
 
 function pause(){
     this._run = false;
@@ -23,3 +15,5 @@ function GameLoop(context){
 GameLoop = createSpec(GameLoop, EventEmitter);
 GameLoop.prototype.pause = pause;
 GameLoop.prototype.resume = resume;
+
+module.exports = GameLoop;

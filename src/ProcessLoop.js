@@ -1,12 +1,12 @@
 var createSpec = require('spec-js'),
     GameLoop = require('./GameLoop');
 
-function renderLoop(zole){
+function gameLoop(zole){
     if(zole._run){
-        zole.trigger('frame', zole);
-        window.requestAnimationFrame(function(timestamp){
-            renderLoop(zole, timestamp)
-        });
+        zole.emit('step', zole);
+        setTimeout(function(){
+            gameLoop(zole, new Date())
+        }, 10);
     }
 }
 

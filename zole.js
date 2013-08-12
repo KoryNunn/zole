@@ -1,5 +1,8 @@
 var createSpec = require('spec-js'),
-    EventEmitter = require('events');
+    EventEmitter = require('events'),
+    crel = require('crel'),
+    ProcessLoop = require('./src/ProcessLoop'),
+    RenderLoop = require('./src/RenderLoop');
 
 function Game(state){
     var game = this;
@@ -11,9 +14,8 @@ function Game(state){
     this.entities = {};
     this.players = {};
 
-    this.processLoop = new zole.ProcessLoop(this),
-    this.renderLoop = new zole.RenderLoop(this);
-    initEventListeners(this);
+    this._processLoop = new ProcessLoop(this),
+    this._renderLoop = new RenderLoop(this);
 
     for(var key in state){
         this[key] = state[key];
@@ -27,25 +29,18 @@ function Game(state){
         this.entities[key] = new Entity(this, this.entities[key]);
     }
 
-    this.currentPlayer = new Player(this);
-    this.addPlayer(this.currentPlayer);
-
-    for(var i = 0; i < 20; i++){
-        spawnEnemy(this);
-    }
-
-    this.processLoop.on('step', function(loop, timestamp){
+    this._processLoop.on('step', function(loop, timestamp){
         for(var key in game.entities){
             game.entities[key].step();
         }
     });
 
-    this.renderLoop.on('frame', function(loop, timestamp){
+    this._renderLoop.on('frame', function(loop, timestamp){
         game.render();
     });
 
-    this.processLoop.start();
-    this.renderLoop.start();
+    this._processLoop.start();
+    this._renderLoop.start();
 }
 Game = createSpec(Game, EventEmitter);
 Game.prototype.addEntity = function(entity){

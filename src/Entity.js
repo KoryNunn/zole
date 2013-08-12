@@ -55,3 +55,5 @@ Entity.prototype.applyForce = function (force, angle){
     this.velocity.x += force / this.mass * Math.sin(this * (Math.PI/180));
     this.velocity.y -= force / this.mass * Math.cos(this * (Math.PI/180));
 }
+
+module.exports = Entity;

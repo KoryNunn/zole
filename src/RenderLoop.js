@@ -3,7 +3,7 @@ var createSpec = require('spec-js'),
 
 function renderLoop(zole){
     if(zole._run){
-        zole.trigger('frame', zole);
+        zole.emit('frame', zole);
         window.requestAnimationFrame(function(timestamp){
             renderLoop(zole, timestamp)
         });
